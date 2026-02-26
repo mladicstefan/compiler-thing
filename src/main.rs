@@ -1,19 +1,14 @@
 use core::fmt;
 use std::env::{self};
 
-// #[derive(Debug)]
-// enum AST {
-//     Num(),
-//     Char,
-//      String([Char]),
-//      Fn
-// }
-//
+use crate::lexer::Token;
+mod lexer;
 
 #[derive(Debug)]
 enum CompilerError {
     InputFileError(std::io::Error),
     InvalidArguments,
+    UnexpectedCharacter,
 }
 
 impl fmt::Display for CompilerError {
@@ -22,6 +17,9 @@ impl fmt::Display for CompilerError {
             CompilerError::InputFileError(e) => write!(f, "Cannot open file: {}", e),
             CompilerError::InvalidArguments => {
                 write!(f, "Usage: ./compiler <file.bms> [-o output]")
+            }
+            CompilerError::UnexpectedCharacter => {
+                write!(f, "UnexpectedCharacter")
             }
         }
     }
@@ -33,22 +31,32 @@ impl From<std::io::Error> for CompilerError {
     }
 }
 
-fn char_lexer(c: &u8) -> u8 {
-    *c
-}
-
 fn run() -> Result<(), CompilerError> {
     let args: Vec<String> = env::args().collect();
 
     let path = args.get(1).ok_or(CompilerError::InvalidArguments)?;
 
-    let source: Vec<u8> = std::fs::read(path)?;
-    let tokens = source.iter().map(char_lexer).collect::<Vec<_>>();
+    let source: String = std::fs::read_to_string(path)?;
 
-    tokens
-        .iter()
-        .for_each(|c| print!("{:?} ", char::from_u32(*c as u32)));
-    print!("\n");
+    let mut pos = 0;
+
+    while pos < source.len() {
+        let remaining = &source[pos..];
+
+        match Token::get_token(remaining) {
+            Some((token, matched_str)) => {
+                println!("{:?}", token);
+                pos += matched_str.len();
+            }
+            None => {
+                if remaining.starts_with(char::is_whitespace) {
+                    pos += 1;
+                } else {
+                    return Err(CompilerError::UnexpectedCharacter);
+                }
+            }
+        }
+    }
 
     Ok(())
 }
