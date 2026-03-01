@@ -13,6 +13,7 @@ pub enum Literal {
     StringLiteral(String),
 }
 
+#[allow(clippy::upper_case_acronyms)]
 #[derive(Debug, Clone, PartialEq)]
 pub enum Operator {
     Plus,
@@ -42,9 +43,11 @@ pub enum Token {
     Punctuation(Punctuation),
 }
 
+type TokenRule<'a> = (&'a str, fn(&str) -> Token);
+
 impl Token {
     pub fn get_token(input: &str) -> Option<(Token, String)> {
-        let patterns: &[(&str, fn(&str) -> Token)] = &[
+        let patterns: &[TokenRule] = &[
             (r"^[0-9]+", |s| {
                 Token::Literal(Literal::IntegerLiteral(s.parse::<i32>().unwrap()))
             }),

@@ -1,0 +1,34 @@
+{
+    "$schema": "https://raw.githubusercontent.com/mfussenegger/dapconfig-schema/master/dapconfig-schema.json",
+      "version": "0.2.0",
+      "configurations": [
+        {
+          "name": "Launch compiler (source.bms)",
+          "type": "codelldb",
+          "request": "launch",
+          "program": "${workspaceFolder}/target/debug/compiler",
+          "args": ["${workspaceFolder}/source.bms"],
+          "cwd": "${workspaceFolder}",
+          "stopOnEntry": false
+        },
+        {
+          "name": "Launch compiler (prompt args)",
+          "type": "codelldb",
+          "request": "launch",
+          "program": "${workspaceFolder}/target/debug/compiler",
+          "args": [],
+          "cwd": "${workspaceFolder}",
+          "stopOnEntry": false
+        },
+        {
+          "name": "Launch compiler (with output)",
+          "type": "codelldb",
+          "request": "launch",
+          "program": "${workspaceFolder}/target/debug/compiler",
+          "args": ["${workspaceFolder}/source.bms", "-o", "${workspaceFolder}/output"],
+          "cwd": "${workspaceFolder}",
+          "stopOnEntry": false
+        }
+      ]
+}
+
