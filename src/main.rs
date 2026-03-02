@@ -3,6 +3,7 @@ use std::env::{self};
 
 use crate::lexer::Token;
 mod lexer;
+mod parser;
 
 #[derive(Debug)]
 enum CompilerError {

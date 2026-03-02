@@ -1,0 +1,5 @@
+fn doSumn(x: int) -> y: string {
+    let f: bool = true;
+    let y: int = x+2;
+    y * x / y
+}
