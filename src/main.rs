@@ -9,7 +9,7 @@ mod parser;
 enum CompilerError {
     InputFileError(std::io::Error),
     InvalidArguments,
-    UnexpectedCharacter,
+    SyntaxError(usize, usize),
 }
 
 impl fmt::Display for CompilerError {
@@ -19,8 +19,8 @@ impl fmt::Display for CompilerError {
             CompilerError::InvalidArguments => {
                 write!(f, "Usage: ./compiler <file.bms> [-o output]")
             }
-            CompilerError::UnexpectedCharacter => {
-                write!(f, "UnexpectedCharacter")
+            CompilerError::SyntaxError(l, c) => {
+                write!(f, "SyntaxError at Line {l}:{c}")
             }
         }
     }
@@ -53,7 +53,9 @@ fn run() -> Result<(), CompilerError> {
                 if remaining.starts_with(char::is_whitespace) {
                     pos += 1;
                 } else {
-                    return Err(CompilerError::UnexpectedCharacter);
+                    let line = source[..pos].lines().count();
+                    let col = pos - source[..pos].rfind('\n').map(|n| n + 1).unwrap();
+                    return Err(CompilerError::SyntaxError(line + 1, col + 1));
                 }
             }
         }
