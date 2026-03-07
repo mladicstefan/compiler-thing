@@ -1,7 +1,7 @@
 use regex::Regex;
 
 #[derive(Debug, Clone, PartialEq)]
-pub enum Type {
+enum Type {
     Int,
     Bool,
     Float,
@@ -9,7 +9,7 @@ pub enum Type {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub enum Keyword {
+enum Keyword {
     If,
     Else,
     Fn,
@@ -18,7 +18,7 @@ pub enum Keyword {
 
 #[allow(clippy::enum_variant_names)]
 #[derive(Debug, Clone, PartialEq)]
-pub enum Literal {
+enum Literal {
     IntegerLiteral(i32),
     StringLiteral(String),
     BoolLiteral(bool),
@@ -27,7 +27,7 @@ pub enum Literal {
 
 #[allow(clippy::upper_case_acronyms)]
 #[derive(Debug, Clone, PartialEq)]
-pub enum Operator {
+enum Operator {
     // Arithmetic
     Plus,
     Minus,
@@ -44,7 +44,7 @@ pub enum Operator {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub enum Punctuation {
+enum Punctuation {
     Semicolon,
     Colon,
     Comma,
@@ -55,7 +55,7 @@ pub enum Punctuation {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub enum Token {
+enum Token {
     Keyword(Keyword),
     Literal(Literal),
     Identifier(String),
