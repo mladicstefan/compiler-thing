@@ -1,7 +1,8 @@
 use core::fmt;
 use std::env::{self};
 
-use crate::lexer::Token;
+use crate::{lexer::Token, parser::Position};
+mod ast;
 mod lexer;
 mod parser;
 
@@ -15,6 +16,7 @@ enum CompilerError {
 impl fmt::Display for CompilerError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
+            #[allow(clippy::uninlined_format_args)]
             CompilerError::InputFileError(e) => write!(f, "Cannot open file: {}", e),
             CompilerError::InvalidArguments => {
                 write!(f, "Usage: ./compiler <file.bms> [-o output]")
@@ -32,12 +34,16 @@ impl From<std::io::Error> for CompilerError {
     }
 }
 
-fn run() -> Result<(), CompilerError> {
+impl std::error::Error for CompilerError {}
+
+fn run() -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<String> = env::args().collect();
 
     let path = args.get(1).ok_or(CompilerError::InvalidArguments)?;
 
     let source: String = std::fs::read_to_string(path)?;
+
+    let mut tokens: Vec<(Token, Position)> = Vec::new();
 
     let mut pos = 0;
 
@@ -46,8 +52,15 @@ fn run() -> Result<(), CompilerError> {
 
         match Token::get_token(remaining) {
             Some((token, matched_str)) => {
-                println!("{:?}", token);
                 pos += matched_str.len();
+
+                let line: usize = source[..pos].lines().count();
+                let col: usize = pos - source[..pos].rfind('\n').map(|n| n + 1).unwrap_or_default();
+
+                let p = Position { line, col };
+
+                println!("{:?} at: {:?}", &token, &p);
+                tokens.push((token, p));
             }
             None => {
                 if remaining.starts_with(char::is_whitespace) {
@@ -55,7 +68,7 @@ fn run() -> Result<(), CompilerError> {
                 } else {
                     let line = source[..pos].lines().count();
                     let col = pos - source[..pos].rfind('\n').map(|n| n + 1).unwrap();
-                    return Err(CompilerError::SyntaxError(line + 1, col + 1));
+                    return Err(Box::new(CompilerError::SyntaxError(line + 1, col + 1)));
                 }
             }
         }
@@ -66,7 +79,7 @@ fn run() -> Result<(), CompilerError> {
 
 fn main() {
     if let Err(e) = run() {
-        eprintln!("Error {}", e);
+        eprintln!("Error {e}");
         std::process::exit(1);
     }
 }

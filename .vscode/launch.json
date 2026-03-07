@@ -3,11 +3,11 @@
       "version": "0.2.0",
       "configurations": [
         {
-          "name": "Launch compiler (source.bms)",
+          "name": "Launch compiler (program.doot)",
           "type": "codelldb",
           "request": "launch",
           "program": "${workspaceFolder}/target/debug/compiler",
-          "args": ["${workspaceFolder}/source.bms"],
+          "args": ["${workspaceFolder}/program.doot"],
           "cwd": "${workspaceFolder}",
           "stopOnEntry": false
         },

@@ -3,5 +3,4 @@ fn doSumn(x: int) -> y: string {
     let y: int = x+2;
     y * x / y
 }
-?
 
